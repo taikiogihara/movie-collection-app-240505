@@ -203,7 +203,7 @@ const MovieSearch = () => {
             details.belongs_to_collection = collectionDetails;
         }
 
-        console.log("Fetched movie details for movie ID ${movieId}:", details);
+        console.log(`Fetched movie details for movie ID ${movieId}:`, details);
         return details;
     };
 
@@ -212,7 +212,7 @@ const MovieSearch = () => {
         setMovies([]);
         setCurrentPage(1);
         searchMovies(query);
-        console.log("Searching movies with query: ${query}");
+        console.log(`Searching movies with query: ${query}`);
     };
 
     // Function to handle the search action when the Enter key is pressed
@@ -223,54 +223,75 @@ const MovieSearch = () => {
     };
 
     // Function to save a movie to the API
+    // Function to save a movie to the API
     const saveMovieToAPI = async (movie) => {
         try {
             const collectionInput = movie.belongs_to_collection
                 ? {
-                      id: movie.belongs_to_collection.id,
-                      name: movie.belongs_to_collection.name,
-                      poster_path: movie.belongs_to_collection.poster_path,
-                      backdrop_path: movie.belongs_to_collection.backdrop_path,
-                  }
+                    id: movie.belongs_to_collection.id,
+                    name:
+                        movie.belongs_to_collection.name ||
+                        "Unknown Collection Name",
+                    poster_path:
+                        movie.belongs_to_collection.poster_path || "",
+                        backdrop_path:
+                        movie.belongs_to_collection.backdrop_path || "",
+                }
                 : null;
 
-            const castInput = movie.cast.map((person) => ({
-                id: person.id,
-                name: person.name,
-                character: person.character,
-                profile_path: person.profile_path,
-            }));
+            const castInput = movie.cast
+                ? movie.cast.map((person) => ({
+                    id: person.id,
+                    name: person.name || "Unknown Actor",
+                    character: person.character || "Unknown Character",
+                    profile_path: person.profile_path || "",
+                }))
+                : [];
 
-            const crewInput = movie.crew.map((person) => ({
-                id: person.id,
-                name: person.name,
-                job: person.job,
-                profile_path: person.profile_path,
-            }));
+            const crewInput = movie.crew
+                ? movie.crew.map((person) => ({
+                    id: person.id,
+                    name: person.name || "Unknown Crew Member",
+                    job: person.job || "Unknown Job",
+                    profile_path: person.profile_path || "",
+                }))
+                : [];
 
-            const translationsInput = movie.translations.map((translation) => ({
-                iso_3166_1: translation.iso_3166_1,
-                iso_639_1: translation.iso_639_1,
-                name: translation.name,
-                english_name: translation.english_name,
-                data: {
-                    title: translation.data.title,
-                    overview: translation.data.overview,
-                    homepage: translation.data.homepage,
-                },
-            }));
+            const translationsInput = movie.translations
+                ? movie.translations.map((translation) => ({
+                    iso_3166_1:
+                        translation.iso_3166_1 || "Unknown Country Code",
+                    iso_639_1:
+                        translation.iso_639_1 || "Unknown Language Code",
+                    name: translation.name || "Unknown Name",
+                    english_name:
+                        translation.english_name || "Unknown English Name",
+                    data: {
+                        title:
+                            translation.data.title ||
+                            movie.original_title ||
+                            "Untitled",
+                        overview:
+                            translation.data.overview ||
+                            "No overview available.",
+                        homepage: translation.data.homepage || "",
+                    },
+                }))
+                : [];
 
             const movieInput = {
-                title: movie.title,
-                original_title: movie.original_title,
-                japanese_title: movie.japanese_title,
-                overview: movie.overview,
-                japanese_overview: movie.japanese_overview,
-                poster_path: movie.poster_path,
-                release_date: movie.release_date,
-                popularity: movie.popularity,
-                vote_average: movie.vote_average,
-                vote_count: movie.vote_count,
+                title: movie.title || "Untitled",
+                original_title: movie.original_title || "Untitled",
+                japanese_title:
+                    movie.japanese_title || movie.original_title || "Untitled",
+                overview: movie.overview || "No overview available.",
+                japanese_overview:
+                    movie.japanese_overview || "No overview available.",
+                poster_path: movie.poster_path || "",
+                release_date: movie.release_date || "Unknown Release Date",
+                popularity: movie.popularity || 0,
+                vote_average: movie.vote_average || 0,
+                vote_count: movie.vote_count || 0,
                 belongs_to_collection: collectionInput,
                 cast: castInput,
                 crew: crewInput,
@@ -286,7 +307,8 @@ const MovieSearch = () => {
             setSavedMovies([...savedMovies, createdMovie]);
             console.log("Saved movie to API:", createdMovie);
         } catch (error) {
-            console.error("Error saving movie:", error);
+            console.error("Error saving movie to GraphQL API:", error);
+            console.log("Failed input data:", movieInput);
         }
     };
 
@@ -301,7 +323,7 @@ const MovieSearch = () => {
                 (savedMovie) => savedMovie.id !== movieId
             );
             setSavedMovies(updatedMovies);
-            console.log("Deleted movie with ID ${movieId} from API");
+            console.log(`Deleted movie with ID ${movieId} from API`);
         } catch (error) {
             console.error("Error deleting movie:", error);
         }
@@ -321,7 +343,7 @@ const MovieSearch = () => {
         const details = await getMovieDetails(movie.id);
         await saveMovieToAPI(details);
         setSavedMovies([...savedMovies, details]);
-        console.log("Saved movie with ID ${movie.id}");
+        console.log(`Saved movie with ID ${movie.id}`);
     };
 
     // Function to open the movie details modal
@@ -329,7 +351,7 @@ const MovieSearch = () => {
         const details = await getMovieDetails(movie.id);
         setSelectedMovie(details);
         setModalIsOpen(true);
-        console.log("Opened movie details modal for movie ID ${movie.id}");
+        console.log(`Opened movie details modal for movie ID ${movie.id}`);
     };
 
     // Function to close the movie details modal
@@ -366,26 +388,26 @@ const MovieSearch = () => {
             const nextPage = currentPage + 1;
             setCurrentPage(nextPage);
             searchMovies(query, nextPage);
-            console.log("Loading more movies, current page: ${nextPage}");
+            console.log(`Loading more movies, current page: ${nextPage}`);
         }
     };
 
     // Function to handle changing the selected genre filter
     const handleGenreChange = (event) => {
         setSelectedGenre(event.target.value);
-        console.log("Changed genre filter to ${event.target.value}");
+        console.log(`Changed genre filter to ${event.target.value}`);
     };
 
     // Function to handle changing the selected year filter
     const handleYearChange = (event) => {
         setSelectedYear(event.target.value);
-        console.log("Changed year filter to ${event.target.value}");
+        console.log(`Changed year filter to ${event.target.value}`);
     };
 
     // Function to handle changing the selected rating filter
     const handleRatingChange = (event) => {
         setSelectedRating(event.target.value);
-        console.log("Changed rating filter to ${event.target.value}");
+        console.log(`Changed rating filter to ${event.target.value}`);
     };
 
     // Filter the movies based on the selected genre, year, and rating filters
@@ -512,7 +534,7 @@ const MovieDataViewer = () => {
     // Function to handle clicking on a movie
     const handleMovieClick = (movie) => {
         setSelectedMovie(movie);
-        console.log("Clicked on movie with ID ${movie.id}");
+        console.log(`Clicked on movie with ID ${movie.id}`);
     };
 
     // Function to handle deleting a movie
@@ -528,7 +550,7 @@ const MovieDataViewer = () => {
             );
             setSavedMovies(updatedMovies);
             setSelectedMovie(null);
-            console.log("Deleted movie with ID ${movieId}");
+            console.log(`Deleted movie with ID ${movieId}`);
         } catch (error) {
             console.error("Error deleting movie:", error);
         }
@@ -538,7 +560,7 @@ const MovieDataViewer = () => {
     // Function to handle changing the search query
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
-        console.log("Changed search query to ${event.target.value}");
+        console.log(`Changed search query to ${event.target.value}`);
     };
 
     // Filter the saved movies based on the search query
@@ -796,7 +818,7 @@ const fetchMovieDetails = async (movieId) => {
             `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`
         );
         console.log(
-            "Fetched movie details for movie ID ${movieId}:",
+            `Fetched movie details for movie ID ${movieId}:`,
             response.data
         );
         return response.data;
@@ -827,7 +849,7 @@ const fetchMovieTranslations = async (movieId) => {
             `https://api.themoviedb.org/3/movie/${movieId}/translations?api_key=${API_KEY}`
         );
         console.log(
-            "Fetched movie translations for movie ID ${movieId}:",
+            `Fetched movie translations for movie ID ${movieId}:`,
             response.data.translations
         );
         return response.data.translations;
@@ -842,7 +864,7 @@ const fetchCollectionDetails = async (collectionId) => {
             `https://api.themoviedb.org/3/collection/${collectionId}?api_key=${API_KEY}`
         );
         console.log(
-            "Fetched collection details for collection ID ${collectionId}:",
+            `Fetched collection details for collection ID ${collectionId}:`,
             response.data
         );
         return response.data;
