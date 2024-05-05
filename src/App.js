@@ -454,6 +454,8 @@ const MovieSearch = () => {
                 isOpen={modalIsOpen}
                 onRequestClose={closeModal}
                 contentLabel="Movie Details"
+                className="movie-details-modal"
+                overlayClassName="movie-details-modal-overlay"
             >
                 {selectedMovie && (
                     <MovieDetails
@@ -472,7 +474,8 @@ const MovieDataViewer = () => {
     const [savedMovies, setSavedMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(""); // Use useEffect to fetch saved movies when the component mounts
+    const [searchQuery, setSearchQuery] = useState("");
+    // Use useEffect to fetch saved movies when the component mounts
     useEffect(() => {
         const fetchSavedMovies = async () => {
             try {
@@ -640,6 +643,7 @@ const MovieItem = ({
         </div>
     );
 };
+
 // Define the MovieDetails component
 const MovieDetails = ({
     movie,
@@ -650,21 +654,34 @@ const MovieDetails = ({
 }) => {
     // Render the movie details
     return (
-        <div className="movie-details">
-            {onCloseModal && (
-                <button onClick={onCloseModal} className="close-modal">
-                    ✖
-                </button>
-            )}
-            <h2>
-                {movie.title}{" "}
-                {movie.japanese_title ? `(${movie.japanese_title})` : ""}
+        <div className="movie-details-modal-content">
+            <button
+                className="movie-details-modal-close"
+                onClick={onCloseModal}
+            >
+                ×
+            </button>
+            <h2 className="movie-details-modal-title">
+                {movie.title}
+                {movie.japanese_title && `(${movie.japanese_title})`}
             </h2>
-            <h3>{movie.collection_name}</h3>
-            <p>{movie.overview}</p>
-            {movie.japanese_overview && <p>{movie.japanese_overview}</p>}
-            <p>Released on: {movie.release_date}</p>
-            <div className="movie-cast">
+            <div className="movie-details-modal-info">
+                {movie.poster_path && (
+                    <img
+                        className="movie-details-modal-poster"
+                        src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`}
+                        alt={movie.title}
+                    />
+                )}
+                <div className="movie-details-modal-overview">
+                    <p>{movie.overview}</p>
+                    {movie.japanese_overview && (
+                        <p>{movie.japanese_overview}</p>
+                    )}
+                    <p>Released on: {movie.release_date}</p>
+                </div>
+            </div>
+            <div className="movie-details-modal-cast">
                 <h4>Cast:</h4>
                 {movie.cast.map((actor, index) => (
                     <p key={index}>
@@ -672,7 +689,7 @@ const MovieDetails = ({
                     </p>
                 ))}
             </div>
-            <div className="movie-crew">
+            <div className="movie-details-modal-crew">
                 <h4>Crew:</h4>
                 {movie.crew.map((member, index) => (
                     <p key={index}>
@@ -680,34 +697,34 @@ const MovieDetails = ({
                     </p>
                 ))}
             </div>
-            {onSaveMovie && (
-                <button
-                    onClick={() => onSaveMovie(movie)}
-                    className="save-movie"
-                >
-                    {movie.saved ? "Saved" : "Save"}
-                </button>
-            )}
-            {onDeleteMovie && (
-                <button
-                    onClick={() => onDeleteMovie(movie.id)}
-                    className="delete-movie"
-                    disabled={isDeleting}
-                >
-                    {isDeleting ? "Deleting..." : <FaTrash />}
-                </button>
-            )}
+            <div className="movie-details-modal-actions">
+                {onSaveMovie && (
+                    <button
+                        onClick={() => onSaveMovie(movie)}
+                        className="movie-details-modal-save"
+                    >
+                        {movie.saved ? "Saved" : "Save"}
+                    </button>
+                )}
+                {onDeleteMovie && (
+                    <button
+                        onClick={() => onDeleteMovie(movie.id)}
+                        className="movie-details-modal-delete"
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? "Deleting..." : <FaTrash />}
+                    </button>
+                )}
+            </div>
         </div>
     );
 };
-
 // Define the UserProfile component
 const UserProfile = ({ user }) => {
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
-
     const handleUpdateUser = () => {
         // Implement user update logic here
         console.log("Update user profile");
@@ -762,7 +779,6 @@ const fetchMovieDetails = async (movieId) => {
         return null;
     }
 };
-
 const fetchMovieCredits = async (movieId, language = null) => {
     try {
         const url = `https://api.themoviedb.org/3/movie/${movieId}/credits?api_key=${API_KEY}${
@@ -775,7 +791,6 @@ const fetchMovieCredits = async (movieId, language = null) => {
         return null;
     }
 };
-
 const fetchMovieTranslations = async (movieId) => {
     try {
         const response = await axios.get(
@@ -787,7 +802,6 @@ const fetchMovieTranslations = async (movieId) => {
         return null;
     }
 };
-
 const fetchCollectionDetails = async (collectionId) => {
     try {
         const response = await axios.get(
@@ -799,6 +813,5 @@ const fetchCollectionDetails = async (collectionId) => {
         return null;
     }
 };
-
 // Export the App component wrapped with the withAuthenticator higher-order component
 export default withAuthenticator(App);
