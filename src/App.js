@@ -22,6 +22,26 @@ Amplify.configure(config);
 const API_KEY = "5893689a1b35b0083127c388b31bcd75";
 const client = generateClient();
 
+// Set up modal styles
+const modalStyles = {
+    content: {
+        top: "50%",
+        left: "50%",
+        right: "auto",
+        bottom: "auto",
+        marginRight: "-50%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: "#333333",
+        border: "none",
+        borderRadius: "5px",
+        padding: "20px",
+        color: "#f5f5f5",
+    },
+    overlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
+};
+
 // Define the main App component
 const App = ({ signOut, user }) => {
     // Use state to manage the active tab
@@ -699,18 +719,21 @@ const MovieDetails = ({
     );
 };
 
-const UserProfile = ({ user, onUpdateUser, onChangePassword }) => {
+// Define the UserProfile component
+const UserProfile = ({ user }) => {
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
     const handleUpdateUser = () => {
-        onUpdateUser({ name, email });
+        // Implement user update logic here
+        console.log("Update user profile");
     };
 
     const handleChangePassword = () => {
-        onChangePassword(currentPassword, newPassword);
+        // Implement password change logic here
+        console.log("Change password");
     };
 
     return (
@@ -745,7 +768,6 @@ const UserProfile = ({ user, onUpdateUser, onChangePassword }) => {
         </div>
     );
 };
-
 
 const fetchMovieDetails = async (movieId) => {
     try {
