@@ -83,7 +83,6 @@ const App = ({ signOut, user }) => {
                     }}
                     classNames="fade"
                 >
-                    {/* Render the content based on the active tab */}
                     <div className="tab-content">
                         {activeTab === "search" ? (
                             <MovieSearch />

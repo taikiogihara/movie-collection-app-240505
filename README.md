@@ -22,8 +22,7 @@ React アプリの作成:
 
 AWS Amplify ライブラリのインストール:
 
-- `npm install aws-amplify @aws-amplify/ui-react` コマンドを実行して、AWS Amplify ライブラリをインストールします。
-
+- `npm install aws-amplify @aws-amplify/ui-react react-icons react-transition-group react-modal axios` コマンドを実行して、AWS Amplify ライブラリをインストールします。
 Amplify の設定:
 
 - `amplifyconfiguration.json` ファイルを React アプリのソースディレクトリにコピーします。
