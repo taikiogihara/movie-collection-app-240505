@@ -14,12 +14,6 @@ import { FaTrash } from "react-icons/fa";
 
 // Import CSS files for styling
 import "./App.css";
-import "./pages/MovieSearch/MovieSearch.css";
-import "./pages/MovieDataViewer/MovieDataViewer.css";
-import "./components/MovieDetails/MovieDetails.css";
-import "./components/MovieSort/MovieSort.css";
-import "./components/MovieList/MovieList.css";
-import "./components/MovieItem/MovieItem.css";
 
 // Configure Amplify with the provided configuration
 Amplify.configure(config);
