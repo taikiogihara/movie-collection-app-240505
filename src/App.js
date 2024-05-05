@@ -228,55 +228,55 @@ const MovieSearch = () => {
         try {
             const collectionInput = movie.belongs_to_collection
                 ? {
-                    id: movie.belongs_to_collection.id,
-                    name:
-                        movie.belongs_to_collection.name ||
-                        "Unknown Collection Name",
-                    poster_path:
-                        movie.belongs_to_collection.poster_path || "",
-                        backdrop_path:
-                        movie.belongs_to_collection.backdrop_path || "",
-                }
+                      id: movie.belongs_to_collection.id,
+                      name:
+                          movie.belongs_to_collection.name ||
+                          "Unknown Collection Name",
+                      poster_path:
+                          movie.belongs_to_collection.poster_path || "",
+                      backdrop_path:
+                          movie.belongs_to_collection.backdrop_path || "",
+                  }
                 : null;
 
             const castInput = movie.cast
                 ? movie.cast.map((person) => ({
-                    id: person.id,
-                    name: person.name || "Unknown Actor",
-                    character: person.character || "Unknown Character",
-                    profile_path: person.profile_path || "",
-                }))
+                      id: person.id,
+                      name: person.name || "Unknown Actor",
+                      character: person.character || "Unknown Character",
+                      profile_path: person.profile_path || "",
+                  }))
                 : [];
 
             const crewInput = movie.crew
                 ? movie.crew.map((person) => ({
-                    id: person.id,
-                    name: person.name || "Unknown Crew Member",
-                    job: person.job || "Unknown Job",
-                    profile_path: person.profile_path || "",
-                }))
+                      id: person.id,
+                      name: person.name || "Unknown Crew Member",
+                      job: person.job || "Unknown Job",
+                      profile_path: person.profile_path || "",
+                  }))
                 : [];
 
             const translationsInput = movie.translations
                 ? movie.translations.map((translation) => ({
-                    iso_3166_1:
-                        translation.iso_3166_1 || "Unknown Country Code",
-                    iso_639_1:
-                        translation.iso_639_1 || "Unknown Language Code",
-                    name: translation.name || "Unknown Name",
-                    english_name:
-                        translation.english_name || "Unknown English Name",
-                    data: {
-                        title:
-                            translation.data.title ||
-                            movie.original_title ||
-                            "Untitled",
-                        overview:
-                            translation.data.overview ||
-                            "No overview available.",
-                        homepage: translation.data.homepage || "",
-                    },
-                }))
+                      iso_3166_1:
+                          translation.iso_3166_1 || "Unknown Country Code",
+                      iso_639_1:
+                          translation.iso_639_1 || "Unknown Language Code",
+                      name: translation.name || "Unknown Name",
+                      english_name:
+                          translation.english_name || "Unknown English Name",
+                      data: {
+                          title:
+                              translation.data.title ||
+                              movie.original_title ||
+                              "Untitled",
+                          overview:
+                              translation.data.overview ||
+                              "No overview available.",
+                          homepage: translation.data.homepage || "",
+                      },
+                  }))
                 : [];
 
             const movieInput = {
@@ -411,19 +411,25 @@ const MovieSearch = () => {
 
     // Filter the movies based on the selected genre, year, and rating filters
     const filteredMovies = sortedMovies.filter((movie) => {
-        if (
-            selectedGenre &&
-            !movie.genres.some((genre) => genre.id === selectedGenre)
-        ) {
-            return false;
+        let genreMatch = true,
+            yearMatch = true,
+            ratingMatch = true;
+
+        if (selectedGenre) {
+            genreMatch = movie.genres.some(
+                (genre) => genre.id === selectedGenre
+            );
         }
-        if (selectedYear && movie.release_date.slice(0, 4) !== selectedYear) {
-            return false;
+
+        if (selectedYear) {
+            yearMatch = movie.release_date.slice(0, 4) === selectedYear;
         }
-        if (selectedRating && movie.vote_average < selectedRating) {
-            return false;
+
+        if (selectedRating) {
+            ratingMatch = movie.vote_average >= selectedRating;
         }
-        return true;
+
+        return genreMatch && yearMatch && ratingMatch;
     });
     console.log("Filtered movies:", filteredMovies);
 
