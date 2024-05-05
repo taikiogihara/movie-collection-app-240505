@@ -33,6 +33,7 @@ const App = ({ signOut, user }) => {
     // Function to handle tab clicks and update the active tab
     const handleTabClick = (tab) => {
         setActiveTab(tab);
+        console.log(`Tab clicked: ${tab}`);
     };
 
     // Render the App component
@@ -122,6 +123,7 @@ const MovieSearch = () => {
                 const movieData = await client.graphql({ query: listMovies });
                 const movies = movieData.data.listMovies.items;
                 setSavedMovies(movies);
+                console.log("Fetched saved movies:", movies);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
@@ -147,6 +149,7 @@ const MovieSearch = () => {
             );
             setMovies((prevMovies) => [...prevMovies, ...moviesWithDetails]);
             setTotalPages(response.data.total_pages);
+            console.log("Searched movies:", moviesWithDetails);
         } catch (error) {
             console.error("Error fetching movies:", error);
             setError("Failed to fetch movies. Please try again.");
@@ -168,6 +171,7 @@ const MovieSearch = () => {
                 })
             );
             setMovies(moviesWithDetails);
+            console.log("Fetched collection movies:", moviesWithDetails);
         } catch (error) {
             console.error("Error fetching collection movies:", error);
         }
@@ -199,6 +203,7 @@ const MovieSearch = () => {
             details.belongs_to_collection = collectionDetails;
         }
 
+        console.log("Fetched movie details for movie ID ${movieId}:", details);
         return details;
     };
 
@@ -207,6 +212,7 @@ const MovieSearch = () => {
         setMovies([]);
         setCurrentPage(1);
         searchMovies(query);
+        console.log("Searching movies with query: ${query}");
     };
 
     // Function to handle the search action when the Enter key is pressed
@@ -278,6 +284,7 @@ const MovieSearch = () => {
 
             const createdMovie = result.data.createMovie;
             setSavedMovies([...savedMovies, createdMovie]);
+            console.log("Saved movie to API:", createdMovie);
         } catch (error) {
             console.error("Error saving movie:", error);
         }
@@ -294,6 +301,7 @@ const MovieSearch = () => {
                 (savedMovie) => savedMovie.id !== movieId
             );
             setSavedMovies(updatedMovies);
+            console.log("Deleted movie with ID ${movieId} from API");
         } catch (error) {
             console.error("Error deleting movie:", error);
         }
@@ -313,6 +321,7 @@ const MovieSearch = () => {
         const details = await getMovieDetails(movie.id);
         await saveMovieToAPI(details);
         setSavedMovies([...savedMovies, details]);
+        console.log("Saved movie with ID ${movie.id}");
     };
 
     // Function to open the movie details modal
@@ -320,17 +329,20 @@ const MovieSearch = () => {
         const details = await getMovieDetails(movie.id);
         setSelectedMovie(details);
         setModalIsOpen(true);
+        console.log("Opened movie details modal for movie ID ${movie.id}");
     };
 
     // Function to close the movie details modal
     const closeModal = () => {
         setSelectedMovie(null);
         setModalIsOpen(false);
+        console.log("Closed movie details modal");
     };
 
     // Function to handle changing the sort criteria
     const handleSortCriteriaChange = (event) => {
         setSortCriteria(event.target.value);
+        console.log(`Changed sort criteria to ${event.target.value}`);
     };
 
     // Sort the movies based on the selected sort criteria
@@ -346,6 +358,7 @@ const MovieSearch = () => {
         }
         return 0;
     });
+    console.log("Sorted movies:", sortedMovies);
 
     // Function to load more movies when the "Load More" button is clicked
     const loadMoreMovies = () => {
@@ -353,22 +366,26 @@ const MovieSearch = () => {
             const nextPage = currentPage + 1;
             setCurrentPage(nextPage);
             searchMovies(query, nextPage);
+            console.log("Loading more movies, current page: ${nextPage}");
         }
     };
 
     // Function to handle changing the selected genre filter
     const handleGenreChange = (event) => {
         setSelectedGenre(event.target.value);
+        console.log("Changed genre filter to ${event.target.value}");
     };
 
     // Function to handle changing the selected year filter
     const handleYearChange = (event) => {
         setSelectedYear(event.target.value);
+        console.log("Changed year filter to ${event.target.value}");
     };
 
     // Function to handle changing the selected rating filter
     const handleRatingChange = (event) => {
         setSelectedRating(event.target.value);
+        console.log("Changed rating filter to ${event.target.value}");
     };
 
     // Filter the movies based on the selected genre, year, and rating filters
@@ -387,6 +404,7 @@ const MovieSearch = () => {
         }
         return true;
     });
+    console.log("Filtered movies:", filteredMovies);
 
     // Render the MovieSearch component
     return (
@@ -430,7 +448,7 @@ const MovieSearch = () => {
                     {/* Render rating options */}
                 </select>
             </div>
-            {/*Render the loading state, error message, or movie list based on the current state */}
+            {/* Render the loading state, error message, or movie list based on the current state */}
             {isLoading ? (
                 <div className="loading">Loading...</div>
             ) : error ? (
@@ -482,6 +500,7 @@ const MovieDataViewer = () => {
                 const movieData = await client.graphql({ query: listMovies });
                 const movies = movieData.data.listMovies.items;
                 setSavedMovies(movies);
+                console.log("Fetched saved movies:", movies);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
@@ -493,6 +512,7 @@ const MovieDataViewer = () => {
     // Function to handle clicking on a movie
     const handleMovieClick = (movie) => {
         setSelectedMovie(movie);
+        console.log("Clicked on movie with ID ${movie.id}");
     };
 
     // Function to handle deleting a movie
@@ -508,6 +528,7 @@ const MovieDataViewer = () => {
             );
             setSavedMovies(updatedMovies);
             setSelectedMovie(null);
+            console.log("Deleted movie with ID ${movieId}");
         } catch (error) {
             console.error("Error deleting movie:", error);
         }
@@ -517,6 +538,7 @@ const MovieDataViewer = () => {
     // Function to handle changing the search query
     const handleSearchChange = (event) => {
         setSearchQuery(event.target.value);
+        console.log("Changed search query to ${event.target.value}");
     };
 
     // Filter the saved movies based on the search query
@@ -525,6 +547,7 @@ const MovieDataViewer = () => {
         const query = searchQuery.toLowerCase();
         return movieTitle.includes(query);
     });
+    console.log("Filtered saved movies:", filteredSavedMovies);
 
     // Render the MovieDataViewer component
     return (
@@ -663,7 +686,7 @@ const MovieDetails = ({
             </button>
             <h2 className="movie-details-modal-title">
                 {movie.title}
-                {movie.japanese_title && `(${movie.japanese_title})`}
+                {movie.japanese_title && `${movie.japanese_title}`}
             </h2>
             <div className="movie-details-modal-info">
                 {movie.poster_path && (
@@ -767,11 +790,14 @@ const UserProfile = ({ user }) => {
         </div>
     );
 };
-
 const fetchMovieDetails = async (movieId) => {
     try {
         const response = await axios.get(
             `https://api.themoviedb.org/3/movie/${movieId}?api_key=${API_KEY}`
+        );
+        console.log(
+            "Fetched movie details for movie ID ${movieId}:",
+            response.data
         );
         return response.data;
     } catch (error) {
@@ -785,6 +811,10 @@ const fetchMovieCredits = async (movieId, language = null) => {
             language ? `&language=${language}` : ""
         }`;
         const response = await axios.get(url);
+        console.log(
+            "Fetched movie credits for movie ID ${movieId}:",
+            response.data
+        );
         return response.data;
     } catch (error) {
         console.error("Error fetching movie credits:", error);
@@ -796,6 +826,10 @@ const fetchMovieTranslations = async (movieId) => {
         const response = await axios.get(
             `https://api.themoviedb.org/3/movie/${movieId}/translations?api_key=${API_KEY}`
         );
+        console.log(
+            "Fetched movie translations for movie ID ${movieId}:",
+            response.data.translations
+        );
         return response.data.translations;
     } catch (error) {
         console.error("Error fetching movie translations:", error);
@@ -806,6 +840,10 @@ const fetchCollectionDetails = async (collectionId) => {
     try {
         const response = await axios.get(
             `https://api.themoviedb.org/3/collection/${collectionId}?api_key=${API_KEY}`
+        );
+        console.log(
+            "Fetched collection details for collection ID ${collectionId}:",
+            response.data
         );
         return response.data;
     } catch (error) {
