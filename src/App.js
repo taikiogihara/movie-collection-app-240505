@@ -1,5 +1,6 @@
 // Import necessary dependencies from React and other libraries
 import React, { useState, useEffect } from "react";
+import { CSSTransition, SwitchTransition } from "react-transition-group";
 import { Amplify } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
