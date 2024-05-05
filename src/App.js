@@ -115,6 +115,9 @@ const MovieSearch = () => {
     const [selectedGenre, setSelectedGenre] = useState("");
     const [selectedYear, setSelectedYear] = useState("");
     const [selectedRating, setSelectedRating] = useState("");
+    const [genres, setGenres] = useState([]);
+    const [years, setYears] = useState([]);
+    const [ratings, setRatings] = useState([]);
 
     // Helper functions to extract unique genres, years, and ratings
     const extractUniqueValues = (data) => {
