@@ -25,29 +25,6 @@ const client = generateClient();
 // Set up modal styles
 Modal.setAppElement("#root");
 
-const modalStyles = {
-    content: {
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-        backgroundColor: "#1a1a1a",
-        border: "none",
-        borderRadius: "5px",
-        padding: "30px",
-        color: "#f5f5f5",
-        maxWidth: "800px",
-        width: "90%",
-        maxHeight: "90%",
-        overflow: "auto",
-    },
-    overlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-    },
-};
-
 // Define the main App component
 const App = ({ signOut, user }) => {
     // Use state to manage the active tab
