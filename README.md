@@ -1,70 +1,60 @@
-# Getting Started with Create React App
+AWS Amplify のセットアップ:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- AWS Amplify CLI をインストールします。
+- `amplify init` コマンドを実行して、Amplify プロジェクトを初期化します。
+- 必要な設定を行い、AWS アカウントと連携します。
 
-## Available Scripts
+GraphQL API の作成:
 
-In the project directory, you can run:
+- `amplify add api` コマンドを実行して、GraphQL API を追加します。
+- スキーマを定義するために、`schema.graphql` ファイルを編集します。
+- 必要なクエリ、ミューテーション、サブスクリプション、タイプを定義します。
 
-### `npm start`
+認証の追加:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `amplify add auth` コマンドを実行して、認証機能を追加します。
+- Amazon Cognito を使用して、ユーザー認証とアクセス制御を設定します。
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+React アプリの作成:
 
-### `npm test`
+- `create-react-app` コマンドを使用して、新しい React アプリを作成します。
+- 必要なディレクトリ構造とファイルを設定します。
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+AWS Amplify ライブラリのインストール:
 
-### `npm run build`
+- `npm install aws-amplify @aws-amplify/ui-react` コマンドを実行して、AWS Amplify ライブラリをインストールします。
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Amplify の設定:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `amplifyconfiguration.json` ファイルを React アプリのソースディレクトリにコピーします。
+- `App.js` ファイルで Amplify を設定し、認証を有効にします。
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+GraphQL クエリとミューテーションの実装:
 
-### `npm run eject`
+- AWS Amplify の `API` モジュールを使用して、GraphQL クエリとミューテーションを実行します。
+- `graphql` フォルダに、必要なクエリとミューテーションを定義します。
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+コンポーネントの作成:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `MovieSearch`、`MovieDataViewer`、`MovieDetails` などのコンポーネントを作成します。
+- 各コンポーネントに必要な状態管理とロジックを実装します。
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+コンポーネントの統合:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- `App` コンポーネントでルーティングと認証を設定します。
+- 各コンポーネントを適切に配置し、データの受け渡しを行います。
 
-## Learn More
+スタイリング:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- CSS やスタイルライブラリを使用して、アプリケーションのスタイリングを行います。
+- コンポーネントごとにスタイルファイルを作成し、適用します。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+テストとデバッグ:
 
-### Code Splitting
+- アプリケーションを実行し、機能をテストします。
+- エラーやバグがある場合は、デバッグして修正します。
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+デプロイ:
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `amplify push` コマンドを実行して、変更をクラウドにプッシュします。
+- Amplify Console でビルドとデプロイを行います。

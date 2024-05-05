@@ -1,0 +1,137 @@
+type Movie @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  title: String!
+  original_title: String!
+  japanese_title: String
+  overview: String!
+  japanese_overview: String
+  poster_path: String
+  release_date: String!
+  popularity: Float!
+  vote_average: Float!
+  vote_count: Int!
+  belongs_to_collection: Collection
+  cast: [Cast!]
+  crew: [Crew!]
+  translations: [Translation!]
+}
+
+type Collection {
+  id: ID!
+  name: String!
+  poster_path: String
+  backdrop_path: String
+}
+
+type Cast {
+  id: ID!
+  name: String!
+  character: String!
+  profile_path: String
+}
+
+type Crew {
+  id: ID!
+  name: String!
+  job: String!
+  profile_path: String
+}
+
+type Translation {
+  iso_3166_1: String!
+  iso_639_1: String!
+  name: String!
+  english_name: String!
+  data: TranslationData!
+}
+
+type TranslationData {
+  title: String
+  overview: String
+  homepage: String
+}
+
+type Query {
+  getMovieById(id: ID!): Movie @auth(rules: [{ allow: owner }])
+  getMovieList: [Movie!] @auth(rules: [{ allow: owner }])
+}
+
+type Mutation {
+  addMovie(input: CreateMovieInput!): Movie @auth(rules: [{ allow: owner }])
+  editMovie(input: UpdateMovieInput!): Movie @auth(rules: [{ allow: owner }])
+  removeMovie(input: DeleteMovieInput!): Movie @auth(rules: [{ allow: owner }])
+}
+
+input CreateMovieInput {
+  title: String!
+  original_title: String!
+  japanese_title: String
+  overview: String!
+  japanese_overview: String
+  poster_path: String
+  release_date: String!
+  popularity: Float!
+  vote_average: Float!
+  vote_count: Int!
+  belongs_to_collection: CollectionInput
+  cast: [CastInput!]
+  crew: [CrewInput!]
+  translations: [TranslationInput!]
+}
+
+input UpdateMovieInput {
+  id: ID!
+  title: String
+  original_title: String
+  japanese_title: String
+  overview: String
+  japanese_overview: String
+  poster_path: String
+  release_date: String
+  popularity: Float
+  vote_average: Float
+  vote_count: Int
+  belongs_to_collection: CollectionInput
+  cast: [CastInput!]
+  crew: [CrewInput!]
+  translations: [TranslationInput!]
+}
+
+input DeleteMovieInput {
+  id: ID!
+}
+
+input CollectionInput {
+  id: ID!
+  name: String!
+  poster_path: String
+  backdrop_path: String
+}
+
+input CastInput {
+  id: ID!
+  name: String!
+  character: String!
+  profile_path: String
+}
+
+input CrewInput {
+  id: ID!
+  name: String!
+  job: String!
+  profile_path: String
+}
+
+input TranslationInput {
+  iso_3166_1: String!
+  iso_639_1: String!
+  name: String!
+  english_name: String!
+  data: TranslationDataInput!
+}
+
+input TranslationDataInput {
+  title: String
+  overview: String
+  homepage: String
+}
