@@ -308,7 +308,6 @@ const MovieSearch = () => {
             console.log("Saved movie to API:", createdMovie);
         } catch (error) {
             console.error("Error saving movie to GraphQL API:", error);
-            console.log("Failed input data:", movieInput);
         }
     };
 
