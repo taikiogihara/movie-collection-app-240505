@@ -1,6 +1,5 @@
 // Import necessary dependencies from React and other libraries
 import React, { useState, useEffect } from "react";
-import { CSSTransition, SwitchTransition } from "react-transition-group";
 import { Amplify } from "aws-amplify";
 import { withAuthenticator } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
@@ -23,6 +22,8 @@ const API_KEY = "5893689a1b35b0083127c388b31bcd75";
 const client = generateClient();
 
 // Set up modal styles
+Modal.setAppElement("#root");
+
 const modalStyles = {
     content: {
         top: "50%",
@@ -31,14 +32,18 @@ const modalStyles = {
         bottom: "auto",
         marginRight: "-50%",
         transform: "translate(-50%, -50%)",
-        backgroundColor: "#333333",
+        backgroundColor: "#1a1a1a",
         border: "none",
         borderRadius: "5px",
-        padding: "20px",
+        padding: "30px",
         color: "#f5f5f5",
+        maxWidth: "800px",
+        width: "90%",
+        maxHeight: "90%",
+        overflow: "auto",
     },
     overlay: {
-        backgroundColor: "rgba(0, 0, 0, 0.75)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
     },
 };
 
