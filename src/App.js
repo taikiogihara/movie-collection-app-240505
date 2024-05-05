@@ -99,19 +99,22 @@ const App = ({ signOut, user }) => {
     );
 };
 
+// Define the MovieSearch component
 const MovieSearch = () => {
+    // Use state to manage various aspects of the movie search functionality
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
-    const [genres, setGenres] = useState([]);
-    const [years, setYears] = useState([]);
-    const [ratings, setRatings] = useState([]);
-    const [selectedGenre, setSelectedGenre] = useState("");
-    const [selectedYear, setSelectedYear] = useState("");
-    const [selectedRating, setSelectedRating] = useState("");
+    const [selectedMovie, setSelectedMovie] = useState(null);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [savedMovies, setSavedMovies] = useState([]);
+    const [sortCriteria, setSortCriteria] = useState("popularity");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [selectedGenre, setSelectedGenre] = useState("");
+    const [selectedYear, setSelectedYear] = useState("");
+    const [selectedRating, setSelectedRating] = useState("");
 
     // Helper functions to extract unique genres, years, and ratings
     const extractUniqueValues = (data) => {
@@ -139,6 +142,22 @@ const MovieSearch = () => {
         setRatings([...allRatings].sort((a, b) => b - a));
     };
 
+    // Use useEffect to fetch saved movies when the component mounts
+    useEffect(() => {
+        const fetchSavedMovies = async () => {
+            try {
+                const movieData = await client.graphql({ query: listMovies });
+                const movies = movieData.data.listMovies.items;
+                setSavedMovies(movies);
+                console.log("Fetched saved movies:", movies);
+            } catch (error) {
+                console.error("Error fetching saved movies:", error);
+            }
+        };
+
+        fetchSavedMovies();
+    }, []);
+
     // Function to search movies based on the query and page number
     const searchMovies = async (query, page = 1) => {
         setIsLoading(true);
@@ -148,15 +167,71 @@ const MovieSearch = () => {
                 `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${query}&page=${page}`
             );
             const movieResults = response.data.results;
-            setMovies(movieResults);
+            const moviesWithDetails = await Promise.all(
+                movieResults.map(async (movie) => {
+                    const details = await getMovieDetails(movie.id);
+                    return { ...movie, ...details };
+                })
+            );
+            setMovies((prevMovies) => [...prevMovies, ...moviesWithDetails]);
             setTotalPages(response.data.total_pages);
-            extractUniqueValues(movieResults); // Call to extract and update genres, years, and ratings
-            console.log("Searched movies:", movieResults);
+            extractUniqueValues(movieResults);
+            console.log("Searched movies:", moviesWithDetails);
         } catch (error) {
             console.error("Error fetching movies:", error);
             setError("Failed to fetch movies. Please try again.");
         }
         setIsLoading(false);
+    };
+
+    // Function to fetch movies belonging to a collection
+    const fetchCollectionMovies = async (collectionId) => {
+        try {
+            const response = await axios.get(
+                `https://api.themoviedb.org/3/collection/${collectionId}?api_key=${API_KEY}`
+            );
+            const collectionMovies = response.data.parts;
+            const moviesWithDetails = await Promise.all(
+                collectionMovies.map(async (movie) => {
+                    const details = await getMovieDetails(movie.id);
+                    return { ...movie, ...details };
+                })
+            );
+            setMovies(moviesWithDetails);
+            console.log("Fetched collection movies:", moviesWithDetails);
+        } catch (error) {
+            console.error("Error fetching collection movies:", error);
+        }
+    };
+
+    // Function to fetch movie details, including credits, translations, and collection details
+    const getMovieDetails = async (movieId) => {
+        const details = await fetchMovieDetails(movieId);
+        const credits = await fetchMovieCredits(movieId);
+        const translations = await fetchMovieTranslations(movieId);
+
+        const japaneseTranslation = translations.find(
+            (translation) => translation.iso_3166_1 === "JP"
+        );
+        if (japaneseTranslation) {
+            details.japanese_title =
+                japaneseTranslation.data.title || details.original_title;
+            details.japanese_overview = japaneseTranslation.data.overview;
+        }
+
+        details.cast = credits.cast;
+        details.crew = credits.crew;
+        details.translations = translations;
+
+        if (details.belongs_to_collection) {
+            const collectionDetails = await fetchCollectionDetails(
+                details.belongs_to_collection.id
+            );
+            details.belongs_to_collection = collectionDetails;
+        }
+
+        console.log(`Fetched movie details for movie ID ${movieId}:`, details);
+        return details;
     };
 
     // Function to handle the search action when the search button is clicked
@@ -167,21 +242,251 @@ const MovieSearch = () => {
         console.log(`Searching movies with query: ${query}`);
     };
 
+    // Function to handle the search action when the Enter key is pressed
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
+    };
+
+    // Function to save a movie to the API
+    const saveMovieToAPI = async (movie) => {
+        try {
+            const collectionInput = movie.belongs_to_collection
+                ? {
+                      id: movie.belongs_to_collection.id,
+                      name:
+                          movie.belongs_to_collection.name ||
+                          "Unknown Collection Name",
+                      poster_path:
+                          movie.belongs_to_collection.poster_path || "",
+                      backdrop_path:
+                          movie.belongs_to_collection.backdrop_path || "",
+                  }
+                : null;
+
+            const castInput = movie.cast
+                ? movie.cast.map((person) => ({
+                      id: person.id,
+                      name: person.name || "Unknown Actor",
+                      character: person.character || "Unknown Character",
+                      profile_path: person.profile_path || "",
+                  }))
+                : [];
+
+            const crewInput = movie.crew
+                ? movie.crew.map((person) => ({
+                      id: person.id,
+                      name: person.name || "Unknown Crew Member",
+                      job: person.job || "Unknown Job",
+                      profile_path: person.profile_path || "",
+                  }))
+                : [];
+
+            const translationsInput = movie.translations
+                ? movie.translations.map((translation) => ({
+                      iso_3166_1:
+                          translation.iso_3166_1 || "Unknown Country Code",
+                      iso_639_1:
+                          translation.iso_639_1 || "Unknown Language Code",
+                      name: translation.name || "Unknown Name",
+                      english_name:
+                          translation.english_name || "Unknown English Name",
+                      data: {
+                          title:
+                              translation.data.title ||
+                              movie.original_title ||
+                              "Untitled",
+                          overview:
+                              translation.data.overview ||
+                              "No overview available.",
+                          homepage: translation.data.homepage || "",
+                      },
+                  }))
+                : [];
+
+            const movieInput = {
+                title: movie.title || "Untitled",
+                original_title: movie.original_title || "Untitled",
+                japanese_title:
+                    movie.japanese_title || movie.original_title || "Untitled",
+                overview: movie.overview || "No overview available.",
+                japanese_overview:
+                    movie.japanese_overview || "No overview available.",
+                poster_path: movie.poster_path || "",
+                release_date: movie.release_date || "Unknown Release Date",
+                popularity: movie.popularity || 0,
+                vote_average: movie.vote_average || 0,
+                vote_count: movie.vote_count || 0,
+                belongs_to_collection: collectionInput,
+                cast: castInput,
+                crew: crewInput,
+                translations: translationsInput,
+            };
+
+            const result = await client.graphql({
+                query: createMovie,
+                variables: { input: movieInput },
+            });
+
+            const createdMovie = result.data.createMovie;
+            setSavedMovies([...savedMovies, createdMovie]);
+            console.log("Saved movie to API:", createdMovie);
+        } catch (error) {
+            console.error("Error saving movie to GraphQL API:", error);
+        }
+    };
+
+    // Function to delete a movie from the API
+    const deleteMovieFromAPI = async (movieId) => {
+        try {
+            await client.graphql({
+                query: deleteMovie,
+                variables: { input: { id: movieId } },
+            });
+            const updatedMovies = savedMovies.filter(
+                (savedMovie) => savedMovie.id !== movieId
+            );
+            setSavedMovies(updatedMovies);
+            console.log(`Deleted movie with ID ${movieId} from API`);
+        } catch (error) {
+            console.error("Error deleting movie:", error);
+        }
+    };
+
+    // Function to handle saving a movie
+    const handleSaveMovie = async (movie) => {
+        const isSaved = savedMovies.some(
+            (savedMovie) => savedMovie.id === movie.id
+        );
+
+        if (isSaved) {
+            console.log("Movie is already saved. Skipping save operation.");
+            return;
+        }
+
+        const details = await getMovieDetails(movie.id);
+        await saveMovieToAPI(details);
+        setSavedMovies([...savedMovies, details]);
+        console.log(`Saved movie with ID ${movie.id}`);
+    };
+
+    // Function to open the movie details modal
+    const openModal = async (movie) => {
+        const details = await getMovieDetails(movie.id);
+        setSelectedMovie(details);
+        setModalIsOpen(true);
+        console.log(`Opened movie details modal for movie ID ${movie.id}`);
+    };
+
+    // Function to close the movie details modal
+    const closeModal = () => {
+        setSelectedMovie(null);
+        setModalIsOpen(false);
+        console.log("Closed movie details modal");
+    };
+
+    // Function to handle changing the sort criteria
+    const handleSortCriteriaChange = (event) => {
+        setSortCriteria(event.target.value);
+        console.log(`Changed sort criteria to ${event.target.value}`);
+    };
+
+    // Sort the movies based on the selected sort criteria
+    const sortedMovies = movies.sort((a, b) => {
+        if (sortCriteria === "popularity") {
+            return b.popularity - a.popularity;
+        } else if (sortCriteria === "releaseDate") {
+            return new Date(b.release_date) - new Date(a.release_date);
+        } else if (sortCriteria === "title") {
+            const titleA = a.japanese_title || a.original_title;
+            const titleB = b.japanese_title || b.original_title;
+            return titleA.localeCompare(titleB);
+        }
+        return 0;
+    });
+    console.log("Sorted movies:", sortedMovies);
+
+    // Function to load more movies when the "Load More" button is clicked
+    const loadMoreMovies = () => {
+        if (currentPage < totalPages) {
+            const nextPage = currentPage + 1;
+            setCurrentPage(nextPage);
+            searchMovies(query, nextPage);
+            console.log(`Loading more movies, current page: ${nextPage}`);
+        }
+    };
+
+    // Function to handle changing the selected genre filter
+    const handleGenreChange = (event) => {
+        setSelectedGenre(event.target.value);
+        console.log(`Changed genre filter to ${event.target.value}`);
+    };
+
+    // Function to handle changing the selected year filter
+    const handleYearChange = (event) => {
+        setSelectedYear(event.target.value);
+        console.log(`Changed year filter to ${event.target.value}`);
+    };
+
+    // Function to handle changing the selected rating filter
+    const handleRatingChange = (event) => {
+        setSelectedRating(event.target.value);
+        console.log(`Changed rating filter to ${event.target.value}`);
+    };
+
+    // Filter the movies based on the selected genre, year, and rating filters
+    const filteredMovies = sortedMovies.filter((movie) => {
+        let genreMatch = true,
+            yearMatch = true,
+            ratingMatch = true;
+
+        if (selectedGenre) {
+            genreMatch = movie.genres.some(
+                (genre) => genre.id === selectedGenre
+            );
+        }
+
+        if (selectedYear) {
+            yearMatch = movie.release_date.slice(0, 4) === selectedYear;
+        }
+
+        if (selectedRating) {
+            ratingMatch = movie.vote_average >= selectedRating;
+        }
+
+        return genreMatch && yearMatch && ratingMatch;
+    });
+    console.log("Filtered movies:", filteredMovies);
+
+    // Render the MovieSearch component
     return (
         <div className="movie-search">
             <h1>Movie Search</h1>
+            {/* Render the search container */}
             <div className="search-container">
                 <input
                     type="text"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Search..."
                     className="search-bar"
                 />
+                <select
+                    value={sortCriteria}
+                    onChange={handleSortCriteriaChange}
+                    className="sort-dropdown"
+                >
+                    <option value="title">Sort by Title</option>
+                    <option value="releaseDate">Sort by Release Date</option>
+                    <option value="popularity">Sort by Popularity</option>
+                </select>
                 <button onClick={handleSearch} className="search-button">
                     Search
                 </button>
             </div>
+            {/* Render the filters */}
             <div className="filters">
                 <select
                     value={selectedGenre}
@@ -217,17 +522,41 @@ const MovieSearch = () => {
                     ))}
                 </select>
             </div>
+            {/* Render the loading state, error message, or movie list based on the current state */}
             {isLoading ? (
-                <div>Loading...</div>
+                <div className="loading">Loading...</div>
             ) : error ? (
                 <div className="error-message">{error}</div>
             ) : (
-                <div className="movie-list">
-                    {movies.map((movie) => (
-                        <div key={movie.id}>{movie.title}</div>
-                    ))}
-                </div>
+                <>
+                    <MovieList
+                        movies={filteredMovies}
+                        savedMovies={savedMovies}
+                        onOpenModal={openModal}
+                        onSaveMovie={handleSaveMovie}
+                        onFetchCollectionMovies={fetchCollectionMovies}
+                    />
+                    {currentPage < totalPages && (
+                        <button onClick={loadMoreMovies}>Load More</button>
+                    )}
+                </>
             )}
+            {/* Render the movie details modal */}
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Movie Details"
+                className="movie-details-modal"
+                overlayClassName="movie-details-modal-overlay"
+            >
+                {selectedMovie && (
+                    <MovieDetails
+                        movie={selectedMovie}
+                        onSaveMovie={handleSaveMovie}
+                        onCloseModal={closeModal}
+                    />
+                )}
+            </Modal>
         </div>
     );
 };
