@@ -15,7 +15,11 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #333333;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tabs {
@@ -30,14 +34,15 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border-radius: 5px;
 }
 
 .tab:hover {
-    background-color: #333333;
+    background-color: #555555;
 }
 
 .tab.active {
-    background-color: #333333;
+    background-color: #555555;
 }
 
 .signout-button {
@@ -48,6 +53,7 @@ body {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border-radius: 5px;
 }
 
 .signout-button:hover {
@@ -55,20 +61,25 @@ body {
 }
 
 .tab-content {
-    padding: 20px;
+    padding: 30px;
     background-color: #333333;
     border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* MovieSearch.css */
 .movie-search {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .search-container {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    padding: 20px;
+    background-color: #444444;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-bar {
@@ -77,7 +88,7 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #333333;
+    background-color: #555555;
     color: #f5f5f5;
 }
 
@@ -87,7 +98,7 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #333333;
+    background-color: #555555;
     color: #f5f5f5;
 }
 
@@ -111,6 +122,10 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
+    padding: 20px;
+    background-color: #444444;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filters select {
@@ -119,13 +134,13 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #333333;
+    background-color: #555555;
     color: #f5f5f5;
 }
 
 /* MovieDataViewer.css */
 .movie-data-viewer {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .movie-data-viewer input {
@@ -133,7 +148,7 @@ body {
     font-size: 16px;
     border: none;
     border-radius: 5px;
-    background-color: #333333;
+    background-color: #555555;
     color: #f5f5f5;
     margin-bottom: 20px;
     width: 100%;
@@ -141,7 +156,11 @@ body {
 
 /* MovieDetails.css */
 .movie-details {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #444444;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .close-modal {
@@ -194,10 +213,14 @@ body {
 .movie-item {
     cursor: pointer;
     transition: transform 0.3s ease;
+    padding: 20px;
+    background-color: #444444;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .movie-item:hover {
-    transform: scale(1.05);
+    transform: translateY(-5px);
 }
 
 .movie-item img {
@@ -208,7 +231,7 @@ body {
 
 .no-image {
     height: 300px;
-    background-color: #333333;
+    background-color: #555555;
     display: flex;
     justify-content: center;
     align-items: center;
