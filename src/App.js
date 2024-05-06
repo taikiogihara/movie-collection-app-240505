@@ -332,9 +332,18 @@ const MovieSearch = ({ savedMovies, setSavedMovies }) => {
                 variables: { input: movieInput },
             });
 
-            const createdMovie = result.data.createMovie;
-            setSavedMovies([...savedMovies, createdMovie]);
-            console.log("Saved movie to API:", createdMovie);
+            if (result.data && result.data.createMovie) {
+                const createdMovie = result.data.createMovie;
+                updateSavedMovies((prevMovies) => [
+                    ...prevMovies,
+                    createdMovie,
+                ]);
+                console.log("Saved movie to API:", createdMovie);
+            } else {
+                throw new Error(
+                    "Failed to create movie, check the input and API configuration."
+                );
+            }
         } catch (error) {
             console.error("Error saving movie to GraphQL API:", error);
         }
