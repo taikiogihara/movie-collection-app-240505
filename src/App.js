@@ -34,7 +34,7 @@ const App = ({ signOut, user }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                updateSavedMovies(movieData.data.listMovies.items);
+                setSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
@@ -150,7 +150,7 @@ const MovieSearch = ({ savedMovies, setSavedMovies }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                updateSavedMovies(movieData.data.listMovies.items);
+                setSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
@@ -332,7 +332,7 @@ const MovieSearch = ({ savedMovies, setSavedMovies }) => {
 
             if (result.data && result.data.createMovie) {
                 const createdMovie = result.data.createMovie;
-                updateSavedMovies((prevMovies) => [
+                setSavedMovies((prevMovies) => [
                     ...prevMovies,
                     createdMovie,
                 ]);
@@ -582,7 +582,7 @@ const MovieDataViewer = ({ savedMovies, setSavedMovies }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                updateSavedMovies(movieData.data.listMovies.items);
+                setSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
