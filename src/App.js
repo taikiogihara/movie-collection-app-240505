@@ -34,13 +34,13 @@ const App = ({ signOut, user }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                setSavedMovies(movieData.data.listMovies.items);
+                updateSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
         };
         fetchSavedMovies();
-    }, []);
+    }, []);    
 
     const handleTabClick = (tab) => {
         setActiveTab(tab);
@@ -150,16 +150,14 @@ const MovieSearch = ({ savedMovies, setSavedMovies }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                const movies = movieData.data.listMovies.items;
-                setSavedMovies(movies);
-                console.log("Fetched saved movies:", movies);
+                updateSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
         };
-
         fetchSavedMovies();
     }, []);
+    
 
     // Function to search movies based on the query and page number
     const searchMovies = async (query, page = 1) => {
@@ -584,16 +582,14 @@ const MovieDataViewer = ({ savedMovies, setSavedMovies }) => {
         const fetchSavedMovies = async () => {
             try {
                 const movieData = await client.graphql({ query: listMovies });
-                const movies = movieData.data.listMovies.items;
-                setSavedMovies(movies);
-                console.log("Fetched saved movies:", movies);
+                updateSavedMovies(movieData.data.listMovies.items);
             } catch (error) {
                 console.error("Error fetching saved movies:", error);
             }
         };
-
         fetchSavedMovies();
     }, []);
+    
 
     // Function to handle clicking on a movie
     const handleMovieClick = (movie) => {
