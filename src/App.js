@@ -52,28 +52,55 @@ const App = ({ signOut, user }) => {
             <div className="header">
                 <p>Hello {user.username}</p>
                 <div className="tabs">
-                    <button className={`tab ${activeTab === "search" ? "active" : ""}`} onClick={() => handleTabClick("search")}>
+                    <button
+                        className={`tab ${
+                            activeTab === "search" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabClick("search")}
+                    >
                         Movie Search
                     </button>
-                    <button className={`tab ${activeTab === "viewer" ? "active" : ""}`} onClick={() => handleTabClick("viewer")}>
+                    <button
+                        className={`tab ${
+                            activeTab === "viewer" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabClick("viewer")}
+                    >
                         Movie Collection
                     </button>
-                    <button className={`tab ${activeTab === "profile" ? "active" : ""}`} onClick={() => handleTabClick("profile")}>
+                    <button
+                        className={`tab ${
+                            activeTab === "profile" ? "active" : ""
+                        }`}
+                        onClick={() => handleTabClick("profile")}
+                    >
                         User Profile
                     </button>
                 </div>
-                <button className="signout-button" onClick={signOut}>Sign out</button>
+                <button className="signout-button" onClick={signOut}>
+                    Sign out
+                </button>
             </div>
             <div className="tab-content">
-                {activeTab === "search" && <MovieSearch savedMovies={savedMovies} setSavedMovies={setSavedMovies} />}
-                {activeTab === "viewer" && <MovieDataViewer savedMovies={savedMovies} setSavedMovies={setSavedMovies} />}
+                {activeTab === "search" && (
+                    <MovieSearch
+                        savedMovies={savedMovies}
+                        setSavedMovies={setSavedMovies}
+                    />
+                )}
+                {activeTab === "viewer" && (
+                    <MovieDataViewer
+                        savedMovies={savedMovies}
+                        setSavedMovies={setSavedMovies}
+                    />
+                )}
             </div>
         </div>
     );
 };
 
 // Define the MovieSearch component
-const MovieSearch = ({ savedMovies, updateSavedMovies }) => {
+const MovieSearch = ({ savedMovies, setSavedMovies }) => {
     // Use state to manage various aspects of the movie search functionality
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
@@ -537,7 +564,7 @@ const MovieSearch = ({ savedMovies, updateSavedMovies }) => {
 };
 
 // Define the MovieDataViewer component
-const MovieDataViewer = ({ savedMovies, updateSavedMovies }) => {
+const MovieDataViewer = ({ savedMovies, setSavedMovies }) => {
     // Use state to manage saved movies, selected movie, deletion state, and search query
     // const [savedMovies, setSavedMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
