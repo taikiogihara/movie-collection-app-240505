@@ -27,86 +27,59 @@ Modal.setAppElement("#root");
 
 // Define the main App component
 const App = ({ signOut, user }) => {
-    // Use state to manage the active tab
     const [activeTab, setActiveTab] = useState("search");
+    const [savedMovies, setSavedMovies] = useState([]);
 
-    // Function to handle tab clicks and update the active tab
+    useEffect(() => {
+        const fetchSavedMovies = async () => {
+            try {
+                const movieData = await client.graphql({ query: listMovies });
+                setSavedMovies(movieData.data.listMovies.items);
+            } catch (error) {
+                console.error("Error fetching saved movies:", error);
+            }
+        };
+        fetchSavedMovies();
+    }, []);
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
         console.log(`Tab clicked: ${tab}`);
     };
 
-    // Render the App component
     return (
         <div className="app">
-            {/* Render the header */}
             <div className="header">
                 <p>Hello {user.username}</p>
-                {/* Render the tab buttons */}
                 <div className="tabs">
-                    <button
-                        className={`tab ${
-                            activeTab === "search" ? "active" : ""
-                        }`}
-                        onClick={() => handleTabClick("search")}
-                    >
-                        <i className="fas fa-search"></i> Movie Search
+                    <button className={`tab ${activeTab === "search" ? "active" : ""}`} onClick={() => handleTabClick("search")}>
+                        Movie Search
                     </button>
-                    <button
-                        className={`tab ${
-                            activeTab === "viewer" ? "active" : ""
-                        }`}
-                        onClick={() => handleTabClick("viewer")}
-                    >
-                        <i className="fas fa-collection"></i> Movie Collection
+                    <button className={`tab ${activeTab === "viewer" ? "active" : ""}`} onClick={() => handleTabClick("viewer")}>
+                        Movie Collection
                     </button>
-                    <button
-                        className={`tab ${
-                            activeTab === "profile" ? "active" : ""
-                        }`}
-                        onClick={() => handleTabClick("profile")}
-                    >
-                        <i className="fas fa-user"></i> User Profile
+                    <button className={`tab ${activeTab === "profile" ? "active" : ""}`} onClick={() => handleTabClick("profile")}>
+                        User Profile
                     </button>
                 </div>
-                {/* Render the sign out button */}
-                <button className="signout-button" onClick={signOut}>
-                    Sign out
-                </button>
+                <button className="signout-button" onClick={signOut}>Sign out</button>
             </div>
-
-            {/* Use SwitchTransition and CSSTransition for animating between tabs */}
-            <SwitchTransition mode="out-in">
-                <CSSTransition
-                    key={activeTab}
-                    addEndListener={(node, done) => {
-                        node.addEventListener("transitionend", done, false);
-                    }}
-                    classNames="fade"
-                >
-                    <div className="tab-content">
-                        {activeTab === "search" ? (
-                            <MovieSearch />
-                        ) : activeTab === "viewer" ? (
-                            <MovieDataViewer />
-                        ) : (
-                            <UserProfile user={user} />
-                        )}
-                    </div>
-                </CSSTransition>
-            </SwitchTransition>
+            <div className="tab-content">
+                {activeTab === "search" && <MovieSearch savedMovies={savedMovies} setSavedMovies={setSavedMovies} />}
+                {activeTab === "viewer" && <MovieDataViewer savedMovies={savedMovies} setSavedMovies={setSavedMovies} />}
+            </div>
         </div>
     );
 };
 
 // Define the MovieSearch component
-const MovieSearch = () => {
+const MovieSearch = ({ savedMovies, updateSavedMovies }) => {
     // Use state to manage various aspects of the movie search functionality
     const [query, setQuery] = useState("");
     const [movies, setMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [savedMovies, setSavedMovies] = useState([]);
+    // const [savedMovies, setSavedMovies] = useState([]);
     const [sortCriteria, setSortCriteria] = useState("popularity");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -564,9 +537,9 @@ const MovieSearch = () => {
 };
 
 // Define the MovieDataViewer component
-const MovieDataViewer = () => {
+const MovieDataViewer = ({ savedMovies, updateSavedMovies }) => {
     // Use state to manage saved movies, selected movie, deletion state, and search query
-    const [savedMovies, setSavedMovies] = useState([]);
+    // const [savedMovies, setSavedMovies] = useState([]);
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -650,6 +623,7 @@ const MovieDataViewer = () => {
         </div>
     );
 };
+
 // Define the MovieSort component
 const MovieSort = ({ sortCriteria, onSortCriteriaChange }) => {
     // Render the movie sort dropdown
