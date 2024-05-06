@@ -677,9 +677,11 @@ const MovieList = ({
                 const isSaved = savedMovies?.some(
                     (savedMovie) => savedMovie.id === movie.id
                 );
-                // コレクション情報も表示する
                 const collectionName = movie.belongs_to_collection
                     ? movie.belongs_to_collection.name
+                    : null;
+                const collectionId = movie.belongs_to_collection
+                    ? movie.belongs_to_collection.id
                     : null;
                 return (
                     <MovieItem
@@ -687,6 +689,7 @@ const MovieList = ({
                         movie={movie}
                         isSaved={isSaved}
                         collectionName={collectionName}
+                        collectionId={collectionId}
                         onOpenModal={onOpenModal}
                         onSaveMovie={onSaveMovie}
                         onFetchCollectionMovies={onFetchCollectionMovies}
@@ -703,6 +706,7 @@ const MovieItem = ({
     movie,
     isSaved,
     collectionName,
+    collectionId,
     onOpenModal,
     onSaveMovie,
     onFetchCollectionMovies,
@@ -720,8 +724,8 @@ const MovieItem = ({
     // Function to handle collection name click
     const handleCollectionClick = (e) => {
         e.stopPropagation(); // Prevent the event from bubbling up to the movie item click
-        if (collectionName && onFetchCollectionMovies) {
-            onFetchCollectionMovies(collectionName);
+        if (collectionId && onFetchCollectionMovies) {
+            onFetchCollectionMovies(collectionId);
         }
     };
 
