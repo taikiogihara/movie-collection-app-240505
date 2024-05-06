@@ -689,6 +689,7 @@ const MovieList = ({
                         collectionName={collectionName}
                         onOpenModal={onOpenModal}
                         onSaveMovie={onSaveMovie}
+                        onFetchCollectionMovies={onFetchCollectionMovies}
                         onMovieClick={onMovieClick}
                     />
                 );
@@ -696,6 +697,7 @@ const MovieList = ({
         </div>
     );
 };
+
 // Define the MovieItem component
 const MovieItem = ({
     movie,
@@ -703,6 +705,7 @@ const MovieItem = ({
     collectionName,
     onOpenModal,
     onSaveMovie,
+    onFetchCollectionMovies,
     onMovieClick,
 }) => {
     // Function to handle clicking on a movie item
@@ -711,6 +714,14 @@ const MovieItem = ({
             onOpenModal(movie);
         } else if (onMovieClick) {
             onMovieClick(movie);
+        }
+    };
+
+    // Function to handle collection name click
+    const handleCollectionClick = (e) => {
+        e.stopPropagation(); // Prevent the event from bubbling up to the movie item click
+        if (collectionName && onFetchCollectionMovies) {
+            onFetchCollectionMovies(collectionName);
         }
     };
 
@@ -731,7 +742,10 @@ const MovieItem = ({
                     {collectionName && (
                         <>
                             <br />
-                            <span className="collection-name">
+                            <span
+                                className="collection-name"
+                                onClick={handleCollectionClick}
+                            >
                                 ({collectionName})
                             </span>
                         </>
