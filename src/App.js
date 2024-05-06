@@ -438,29 +438,13 @@ const MovieSearch = () => {
         console.log(`Changed rating filter to ${event.target.value}`);
     };
 
-    // Filter the movies based on the selected genre, year, and rating filters
-    const filteredMovies = sortedMovies.filter((movie) => {
-        let genreMatch = true,
-            yearMatch = true,
-            ratingMatch = true;
-
-        if (selectedGenre) {
-            genreMatch = movie.genres.some(
-                (genre) => genre.id === selectedGenre
-            );
-        }
-
-        if (selectedYear) {
-            yearMatch = movie.release_date.slice(0, 4) === selectedYear;
-        }
-
-        if (selectedRating) {
-            ratingMatch = movie.vote_average >= selectedRating;
-        }
-
+    // Filter movies based on the selected genre, year, and rating
+    const filteredMovies = movies.filter(movie => {
+        const genreMatch = !selectedGenre || movie.genre_ids.includes(parseInt(selectedGenre));
+        const yearMatch = !selectedYear || movie.release_date.startsWith(selectedYear);
+        const ratingMatch = !selectedRating || movie.vote_average >= parseFloat(selectedRating);
         return genreMatch && yearMatch && ratingMatch;
     });
-    console.log("Filtered movies:", filteredMovies);
 
     // Render the MovieSearch component
     return (
@@ -491,37 +475,22 @@ const MovieSearch = () => {
             </div>
             {/* Render the filters */}
             <div className="filters">
-                <select
-                    value={selectedGenre}
-                    onChange={(e) => setSelectedGenre(e.target.value)}
-                >
+                <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
                     <option value="">All Genres</option>
-                    {genres.map((genre) => (
-                        <option key={genre.id} value={genre.id}>
-                            {genre.name}
-                        </option>
+                    {genres.map(genre => (
+                        <option key={genre.id} value={genre.id}>{genre.name}</option>
                     ))}
                 </select>
-                <select
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                >
+                <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
                     <option value="">All Years</option>
-                    {years.map((year) => (
-                        <option key={year} value={year}>
-                            {year}
-                        </option>
+                    {years.map(year => (
+                        <option key={year} value={year}>{year}</option>
                     ))}
                 </select>
-                <select
-                    value={selectedRating}
-                    onChange={(e) => setSelectedRating(e.target.value)}
-                >
+                <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
                     <option value="">All Ratings</option>
-                    {ratings.map((rating) => (
-                        <option key={rating} value={rating}>
-                            {rating}
-                        </option>
+                    {ratings.map(rating => (
+                        <option key={rating} value={rating}>{rating}</option>
                     ))}
                 </select>
             </div>
