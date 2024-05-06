@@ -513,16 +513,35 @@ const MovieSearch = () => {
                 </select>
             </div>
             {/* Render the loading state, error message, or movie list based on the current state */}
-            {isLoading ? (
-                <div>Loading...</div>
+            {/* {isLoading ? (
+                <div className="loading">Loading...</div>
             ) : error ? (
                 <div className="error-message">{error}</div>
             ) : (
                 <div className="movie-list">
-                    {filteredMovies.map((movie) => (
+                    {filteredMovies.map(movie => (
                         <div key={movie.id}>{movie.title}</div>
                     ))}
                 </div>
+            )} */}
+
+            {isLoading ? (
+                <div className="loading">Loading...</div>
+            ) : error ? (
+                <div className="error-message">{error}</div>
+            ) : (
+                <>
+                    <MovieList
+                        movies={filteredMovies}
+                        savedMovies={savedMovies}
+                        onOpenModal={openModal}
+                        onSaveMovie={handleSaveMovie}
+                        onFetchCollectionMovies={fetchCollectionMovies}
+                    />
+                    {currentPage < totalPages && (
+                        <button onClick={loadMoreMovies}>Load More</button>
+                    )}
+                </>
             )}
             {/* Render the movie details modal */}
             <Modal
@@ -658,11 +677,16 @@ const MovieList = ({
                 const isSaved = savedMovies?.some(
                     (savedMovie) => savedMovie.id === movie.id
                 );
-                return movie.belongs_to_collection ? null : (
+                // コレクション情報も表示する
+                const collectionName = movie.belongs_to_collection
+                    ? movie.belongs_to_collection.name
+                    : null;
+                return (
                     <MovieItem
                         key={movie.id}
                         movie={movie}
                         isSaved={isSaved}
+                        collectionName={collectionName}
                         onOpenModal={onOpenModal}
                         onSaveMovie={onSaveMovie}
                         onMovieClick={onMovieClick}
@@ -676,6 +700,7 @@ const MovieList = ({
 const MovieItem = ({
     movie,
     isSaved,
+    collectionName,
     onOpenModal,
     onSaveMovie,
     onMovieClick,
@@ -688,6 +713,7 @@ const MovieItem = ({
             onMovieClick(movie);
         }
     };
+
     // Render the movie item
     return (
         <div className="movie-item" onClick={handleClick}>
@@ -701,11 +727,13 @@ const MovieItem = ({
             )}
             <div className="movie-info">
                 <h4>
-                    {movie.original_title}
-                    {movie.japanese_title && (
+                    {movie.title}
+                    {collectionName && (
                         <>
                             <br />
-                            {movie.japanese_title}
+                            <span className="collection-name">
+                                ({collectionName})
+                            </span>
                         </>
                     )}
                 </h4>
@@ -716,6 +744,7 @@ const MovieItem = ({
                             e.stopPropagation();
                             onSaveMovie(movie);
                         }}
+                        className="save-button"
                     >
                         {isSaved ? "Unsave" : "Save"}
                     </button>
