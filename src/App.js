@@ -439,10 +439,13 @@ const MovieSearch = () => {
     };
 
     // Filter movies based on the selected genre, year, and rating
-    const filteredMovies = movies.filter(movie => {
-        const genreMatch = !selectedGenre || movie.genre_ids.includes(parseInt(selectedGenre));
-        const yearMatch = !selectedYear || movie.release_date.startsWith(selectedYear);
-        const ratingMatch = !selectedRating || movie.vote_average >= parseFloat(selectedRating);
+    const filteredMovies = movies.filter((movie) => {
+        const genreMatch =
+            !selectedGenre || movie.genre_ids.includes(parseInt(selectedGenre));
+        const yearMatch =
+            !selectedYear || movie.release_date.startsWith(selectedYear);
+        const ratingMatch =
+            !selectedRating || movie.vote_average >= parseFloat(selectedRating);
         return genreMatch && yearMatch && ratingMatch;
     });
 
@@ -475,43 +478,51 @@ const MovieSearch = () => {
             </div>
             {/* Render the filters */}
             <div className="filters">
-                <select value={selectedGenre} onChange={(e) => setSelectedGenre(e.target.value)}>
+                <select
+                    value={selectedGenre}
+                    onChange={(e) => setSelectedGenre(e.target.value)}
+                >
                     <option value="">All Genres</option>
-                    {genres.map(genre => (
-                        <option key={genre.id} value={genre.id}>{genre.name}</option>
+                    {genres.map((genre) => (
+                        <option key={genre.id} value={genre.id}>
+                            {genre.name}
+                        </option>
                     ))}
                 </select>
-                <select value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+                <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                >
                     <option value="">All Years</option>
-                    {years.map(year => (
-                        <option key={year} value={year}>{year}</option>
+                    {years.map((year) => (
+                        <option key={year} value={year}>
+                            {year}
+                        </option>
                     ))}
                 </select>
-                <select value={selectedRating} onChange={(e) => setSelectedRating(e.target.value)}>
+                <select
+                    value={selectedRating}
+                    onChange={(e) => setSelectedRating(e.target.value)}
+                >
                     <option value="">All Ratings</option>
-                    {ratings.map(rating => (
-                        <option key={rating} value={rating}>{rating}</option>
+                    {ratings.map((rating) => (
+                        <option key={rating} value={rating}>
+                            {rating}
+                        </option>
                     ))}
                 </select>
             </div>
             {/* Render the loading state, error message, or movie list based on the current state */}
             {isLoading ? (
-                <div className="loading">Loading...</div>
+                <div>Loading...</div>
             ) : error ? (
                 <div className="error-message">{error}</div>
             ) : (
-                <>
-                    <MovieList
-                        movies={filteredMovies}
-                        savedMovies={savedMovies}
-                        onOpenModal={openModal}
-                        onSaveMovie={handleSaveMovie}
-                        onFetchCollectionMovies={fetchCollectionMovies}
-                    />
-                    {currentPage < totalPages && (
-                        <button onClick={loadMoreMovies}>Load More</button>
-                    )}
-                </>
+                <div className="movie-list">
+                    {filteredMovies.map((movie) => (
+                        <div key={movie.id}>{movie.title}</div>
+                    ))}
+                </div>
             )}
             {/* Render the movie details modal */}
             <Modal
